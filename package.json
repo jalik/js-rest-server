@@ -1,0 +1,40 @@
+{
+  "name": "restack",
+  "version": "1.0.0",
+  "description": "Powerful and complete REST API builder.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/gulp build",
+    "build:prod": "./node_modules/.bin/gulp prepublish",
+    "package": "./node_modules/.bin/webpack && ./node_modules/.bin/webpack -p",
+    "prepare": "npm run build:prod && npm test",
+    "prepublishOnly": "npm test",
+    "test": "jest",
+    "watch": "./node_modules/.bin/gulp watch"
+  },
+  "keywords": [
+    "rest",
+    "api"
+  ],
+  "author": {
+    "name": "Karl STEIN",
+    "email": "karl.stein.pro@gmail.com",
+    "url": "https://github.com/jalik"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@jalik/extend": "^1.0.1",
+    "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.1",
+    "gulp-strip-comments": "^2.5.2",
+    "gulp-watch": "^5.0.0",
+    "jest": "^22.4.2",
+    "supertest": "^3.0.0"
+  }
+}
