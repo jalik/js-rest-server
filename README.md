@@ -6,9 +6,34 @@ This is a REST API builder based on the excellent [Express](https://expressjs.co
 
 **The code is tested against bugs.**
 
-## Creating a server
+## Creating a REST API
+
+When creating an API, you must at least define a `method`, a `path` and a `callback`.
+Note that the callback is an Express handler (see [https://expressjs.com/en/starter/basic-routing.html]()).
+
+Since you may have a lot of APIs, it's recommended to put them in separate files like below.
 
 ```js
+// ./api/get-date.js
+const GetDateAPI = new RestAPI({
+    method: "GET",
+    path: "/v1/date",
+    callback(request, response) {
+        response.status(200).send({
+            date: new Date()
+        });
+    }
+});
+export default GetDateAPI;
+```
+
+## Creating a server
+
+To serve the APIs you've created, you need a web server, so let see how to do that.
+
+```js
+// ./server.js
+import GetDateAPI from "./api/get-date";
 import RestServer from "restack/dist/rest-server";
 
 // Define the server configuration
@@ -20,36 +45,10 @@ const server = new RestServer({
     restartOnChange: true,
 });
 
-// APIs definition...
+// Add the APIs to the server
+server.addAPI(GetDateAPI);
 
-server.start();
-```
-
-## Creating a REST API
-
-When creating an API, you must at least define a `method`, a `path` and a `callback`.
-Note that the callback is an Express handler (see [https://expressjs.com/en/starter/basic-routing.html]()).
-
-```js
-import RestAPI from "restack/dist/rest-api";
-import RestServer from "restack/dist/rest-server";
-
-// Define the server configuration
-const server = new RestServer({
-    port: 3001
-});
-
-// Add the API to the server
-server.addAPI(new RestAPI({
-    method: "GET",
-    path: "/v1/date",
-    callback(request, response) {
-        response.status(200).send({
-            date: new Date()
-        });
-    }
-}));
-
+// And finally start the server
 server.start();
 ```
 
