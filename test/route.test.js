@@ -22,10 +22,50 @@
  * SOFTWARE.
  */
 
-import Route from "./route";
-import Server from "./server";
+import Route from "../src/route";
 
-export default {
-    Route: Route,
-    Server: Server
-}
+describe(`Route`, () => {
+
+    it(`should be importable from package`, () => {
+        expect(typeof Route).toEqual("function");
+    });
+
+    describe(`getHandler()`, () => {
+        const route = new Route({
+            method: "get",
+            path: "/",
+            handler() {
+            }
+        });
+
+        it(`should return the handler`, () => {
+            expect(typeof route.getHandler()).toEqual("function");
+        });
+    });
+
+    describe(`getMethod()`, () => {
+        const route = new Route({
+            method: "get",
+            path: "/",
+            handler() {
+            }
+        });
+
+        it(`should return the method in uppercase`, () => {
+            expect(route.getMethod()).toEqual("GET");
+        });
+    });
+
+    describe(`getPath()`, () => {
+        const route = new Route({
+            method: "get",
+            path: "/",
+            handler() {
+            }
+        });
+
+        it(`should return the path`, () => {
+            expect(route.getPath()).toEqual("/");
+        });
+    });
+});

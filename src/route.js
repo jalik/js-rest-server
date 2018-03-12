@@ -22,35 +22,35 @@
  * SOFTWARE.
  */
 
-import {extendRecursively} from "@jalik/extend/dist/index";
+import {extendRecursively} from "@jalik/extend";
 
-class RestAPI {
+class Route {
 
     constructor(options) {
         this.options = extendRecursively({}, options);
 
         if (typeof options.method !== "string") {
-            throw new Error("API method is not valid");
+            throw new Error("Route method is not valid");
         }
         if (typeof options.path !== "string") {
-            throw new Error("API path is not valid");
+            throw new Error("Route path is not valid");
         }
         if (!/^\//.test(options.path)) {
-            throw new Error(`API path "${options.path}" must start with a slash "/"`);
+            throw new Error(`Route path "${options.path}" must start with a slash "/"`);
         }
 
-        // The API callback
-        this._callback = options.callback;
+        // The route handler
+        this._handler = options.handler;
 
-        // The API method
+        // The route method
         this._method = options.method.toUpperCase();
 
-        // The API path
+        // The route path
         this._path = options.path;
     }
 
-    getCallback() {
-        return this._callback;
+    getHandler() {
+        return this._handler;
     }
 
     getMethod() {
@@ -62,4 +62,4 @@ class RestAPI {
     }
 }
 
-export default RestAPI;
+export default Route;

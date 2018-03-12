@@ -1,29 +1,39 @@
 {
-  "name": "restack",
+  "name": "@jalik/rest-server",
   "version": "1.0.0",
-  "description": "Powerful and complete REST API builder.",
+  "description": "A REST API builder based on Express.",
   "main": "dist/index.js",
-  "scripts": {
-    "build": "./node_modules/.bin/gulp build",
-    "build:prod": "./node_modules/.bin/gulp prepublish",
-    "package": "./node_modules/.bin/webpack && ./node_modules/.bin/webpack -p",
-    "prepare": "npm run build:prod && npm test",
-    "prepublishOnly": "npm test",
-    "test": "jest",
-    "watch": "./node_modules/.bin/gulp watch"
-  },
+  "license": "MIT",
   "keywords": [
+    "api",
+    "express",
     "rest",
-    "api"
+    "server"
   ],
   "author": {
     "name": "Karl STEIN",
     "email": "karl.stein.pro@gmail.com",
     "url": "https://github.com/jalik"
   },
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jalik/jk-rest-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jalik/jk-rest-server/issues"
+  },
+  "scripts": {
+    "build": "./node_modules/.bin/gulp build",
+    "build:prod": "./node_modules/.bin/gulp prepublish",
+    "prepare": "npm run build:prod && npm test",
+    "prepublishOnly": "npm test",
+    "test": "jest",
+    "watch": "./node_modules/.bin/gulp watch"
+  },
   "dependencies": {
     "@jalik/extend": "^1.0.1",
+    "@jalik/logger": "^1.0.3",
+    "@jalik/observer": "^1.0.2",
     "express": "^4.16.2"
   },
   "devDependencies": {

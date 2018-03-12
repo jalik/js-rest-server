@@ -22,50 +22,25 @@
  * SOFTWARE.
  */
 
-import RestAPI from "../src/rest-api";
+import Index from "../dist/index";
+import Route from "../dist/route";
+import Server from "../dist/server";
 
-describe(`RestAPI`, () => {
-
+describe(`Route`, () => {
     it(`should be importable from package`, () => {
-        expect(typeof RestAPI).toEqual("function");
+        expect(typeof Route).toEqual("function");
     });
-
-    describe(`getCallback()`, () => {
-        const api = new RestAPI({
-            method: "get",
-            path: "/",
-            callback() {
-            }
-        });
-
-        it(`should return the callback`, () => {
-            expect(typeof api.getCallback()).toEqual("function");
-        });
-    });
-
-    describe(`getMethod()`, () => {
-        const api = new RestAPI({
-            method: "get",
-            path: "/",
-            callback() {
-            }
-        });
-
-        it(`should return the method in uppercase`, () => {
-            expect(api.getMethod()).toEqual("GET");
-        });
-    });
-
-    describe(`getPath()`, () => {
-        const api = new RestAPI({
-            method: "get",
-            path: "/",
-            callback() {
-            }
-        });
-
-        it(`should return the path`, () => {
-            expect(api.getPath()).toEqual("/");
-        });
+    it(`should be importable from index`, () => {
+        expect(typeof Index.Route).toEqual("function");
     });
 });
+
+describe(`Server`, () => {
+    it(`should be importable from package`, () => {
+        expect(typeof Server).toEqual("function");
+    });
+    it(`should be importable from index`, () => {
+        expect(typeof Index.Server).toEqual("function");
+    });
+});
+

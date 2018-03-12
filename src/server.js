@@ -23,25 +23,34 @@
  */
 
 import express from "express";
+import Logger from "@jalik/logger";
+import Observer from "@jalik/observer";
+import Route from "./route";
 import {extendRecursively} from "@jalik/extend";
-import RestAPI from "./rest-api";
 
-class RestServer {
+class Server {
 
     constructor(options) {
         this.options = extendRecursively({
+            formatJson: false,
             port: 3000,
             restartOnChange: true
         }, options);
 
-        // The REST APIs
-        this._apis = [];
-
-        // The APIs listing
-        this._apiList = {};
-
         // Create express server
         this._instance = express();
+
+        // Create logger
+        this._logger = new Logger();
+
+        // Create the observer
+        this._observer = new Observer(this);
+
+        // The server routes
+        this._routes = [];
+
+        // The route listing
+        this._routeList = {};
 
         // The server instance
         this._server = null;
@@ -57,23 +66,24 @@ class RestServer {
 
     /**
      * Adds the REST API
-     * @param restApi
+     * @param route
      */
-    addAPI(restApi) {
-        if (!(restApi instanceof RestAPI)) {
-            throw new TypeError("Not an instance of RestAPI");
+    addRoute(route) {
+        if (!(route instanceof Route)) {
+            throw new TypeError("Not an instance of Route");
         }
-        if (this.apiExists(restApi)) {
-            throw new Error("API already exist");
+        if (this.routeExists(route.getMethod(), route.getPath())) {
+            throw new Error("Route already exist");
         }
 
-        const method = restApi.getMethod().toLowerCase();
+        const method = route.getMethod().toLowerCase();
 
         if (typeof this._instance[method] === "function") {
-            this._instance[method](restApi.getPath(), restApi.getCallback());
-            this._apis.push(restApi);
-            this._apiList = this.generateApiList();
+            this._instance[method](route.getPath(), route.getHandler());
+            this._routes.push(route);
+            this._routeList = this.generateRouteList();
 
+            // Restart server automatically
             if (this._server && this.options.restartOnChange) {
                 this.restart();
             }
@@ -81,16 +91,16 @@ class RestServer {
     }
 
     /**
-     * Checks if the REST API exists
-     * @param {RestAPI} restApi
+     * Checks if the route exists
+     * @param {string} method
+     * @param {string} path
      * @return {boolean}
      */
-    apiExists(restApi) {
+    routeExists(method, path) {
         let exist = false;
 
-        for (let i = 0; i < this._apis.length; i += 1) {
-            if (restApi.getPath() === this._apis[i].getPath()
-                && restApi.getMethod() === this._apis[i].getMethod()) {
+        for (let i = 0; i < this._routes.length; i += 1) {
+            if (path === this._routes[i].getPath() && method === this._routes[i].getMethod()) {
                 exist = true;
                 break;
             }
@@ -99,14 +109,14 @@ class RestServer {
     }
 
     /**
-     * Generates the API list
+     * Generates the route list
      * @return {object}
      */
-    generateApiList() {
+    generateRouteList() {
         const list = {};
 
-        for (let i = 0; i < this._apis.length; i += 1) {
-            const api = this._apis[i];
+        for (let i = 0; i < this._routes.length; i += 1) {
+            const api = this._routes[i];
 
             if (!list.hasOwnProperty(api.getPath())) {
                 list[api.getPath()] = {
@@ -119,19 +129,27 @@ class RestServer {
     }
 
     /**
-     * Returns the API list
+     * Returns the route list
      * @return {object}
      */
-    getApiList() {
-        return this._apiList;
+    getRouteList() {
+        return this._routeList;
     }
 
     /**
-     * Returns the ExpressJS instance
+     * Returns the Express instance
      * @return {*|Function}
      */
     getInstance() {
         return this._instance;
+    }
+
+    /**
+     * Returns the logger
+     * @return {Logger}
+     */
+    getLogger() {
+        return this._logger;
     }
 
     /**
@@ -140,6 +158,24 @@ class RestServer {
      */
     getPort() {
         return this.options.port;
+    }
+
+    /**
+     * Removes an event listener
+     * @param event
+     * @param callback
+     */
+    off(event, callback) {
+        this._observer.detach(event, callback);
+    }
+
+    /**
+     * Adds an event listener
+     * @param event
+     * @param callback
+     */
+    on(event, callback) {
+        this._observer.attach(event, callback);
     }
 
     /**
@@ -154,20 +190,23 @@ class RestServer {
      * Starts the server
      */
     start() {
-        console.log(`Starting REST server on port ${this.options.port}`);
+        this._logger.info(`Starting REST server on port ${this.options.port}`);
 
         // Creates the root API
-        const rootAPI = new RestAPI({
+        const rootAPI = new Route({
             method: "GET",
             path: "/",
-            callback: (request, response) => {
-                this._instance.set("json spaces", 2);
-                response.status(200).send(this.getApiList());
+            handler: (request, response) => {
+                if (this.options.formatJson) {
+                    this._instance.set("json spaces", 2);
+                }
+                response.status(200).send(this.getRouteList());
             }
         });
 
-        if (!this.apiExists(rootAPI)) {
-            this.addAPI(rootAPI);
+        // Add the root path
+        if (!this.routeExists(rootAPI.getMethod(), rootAPI.getPath())) {
+            this.addRoute(rootAPI);
         }
 
         this._server = this._instance.listen(this.options.port);
@@ -178,10 +217,10 @@ class RestServer {
      */
     stop() {
         if (this._server) {
-            console.log(`Stopping REST server on port ${this.options.port}`);
+            this._logger.info(`Stopping REST server on port ${this.options.port}`);
             this._server.close();
         }
     }
 }
 
-export default RestServer;
+export default Server;

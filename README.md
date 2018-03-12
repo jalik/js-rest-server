@@ -1,4 +1,4 @@
-# Restack
+# REST Server
 
 ## Introduction
 
@@ -8,17 +8,19 @@ This is a REST API builder based on the excellent [Express](https://expressjs.co
 
 ## Creating a REST API
 
-When creating an API, you must at least define a `method`, a `path` and a `callback`.
-Note that the callback is an Express handler (see [https://expressjs.com/en/starter/basic-routing.html]()).
+When creating an API, you must at least define a `method`, a `path` and a `handler`.
+Note that the handler is an Express handler (see [https://expressjs.com/en/starter/basic-routing.html]()).
 
 Since you may have a lot of APIs, it's recommended to put them in separate files like below.
 
 ```js
 // ./api/get-date.js
-const GetDateAPI = new RestAPI({
+import Route from "@jalik/rest-server/dist/route";
+
+const GetDateAPI = new Route({
     method: "GET",
     path: "/v1/date",
-    callback(request, response) {
+    handler(request, response) {
         response.status(200).send({
             date: new Date()
         });
@@ -34,10 +36,10 @@ To serve the APIs you've created, you need a web server, so let see how to do th
 ```js
 // ./server.js
 import GetDateAPI from "./api/get-date";
-import RestServer from "restack/dist/rest-server";
+import Server from "@jalik/rest-server/dist/server";
 
 // Define the server configuration
-const server = new RestServer({
+const server = new Server({
     // Listen on this port
     port: 3001,
     // Automatically restart the server
@@ -46,7 +48,7 @@ const server = new RestServer({
 });
 
 // Add the APIs to the server
-server.addAPI(GetDateAPI);
+server.addRoute(GetDateAPI);
 
 // And finally start the server
 server.start();
@@ -55,10 +57,10 @@ server.start();
 ## Adding a middleware
 
 ```js
-import RestServer from "restack/dist/rest-server";
+import Server from "@jalik/rest-server/dist/server";
 
 // Define the server configuration
-const server = new RestServer({
+const server = new Server({
     port: 3001
 });
 

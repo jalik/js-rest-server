@@ -23,12 +23,12 @@
  */
 
 import request from "supertest";
-import RestAPI from "../src/rest-api";
-import RestServer from "../src/rest-server";
+import Route from "../src/route";
+import Server from "../src/server";
 
 describe(`RestServer`, () => {
 
-    const server = new RestServer({
+    const server = new Server({
         port: 3001
     });
 
@@ -37,13 +37,13 @@ describe(`RestServer`, () => {
     });
 
     it(`should be importable from package`, () => {
-        expect(typeof RestServer).toEqual("function");
+        expect(typeof Server).toEqual("function");
     });
 
-    server.addAPI(new RestAPI({
+    server.addRoute(new Route({
         method: "GET",
         path: "/date",
-        callback(request, response) {
+        handler(request, response) {
             response.status(200).send({date: new Date()});
         }
     }));
@@ -56,17 +56,17 @@ describe(`RestServer`, () => {
         });
     });
 
-    describe(`addAPI()`, () => {
-        server.addAPI(new RestAPI({
+    describe(`addRoute()`, () => {
+        server.addRoute(new Route({
             method: "GET",
             path: "/new-api",
-            callback(request, response) {
+            handler(request, response) {
                 response.status(200).send({test:"ok"});
             }
         }));
 
         it(`should add an API`, (done) => {
-            return request(server.getInstance()).get("/date").expect(200, done);
+            return request(server.getInstance()).get("/new-api").expect(200, done);
         });
     });
 
