@@ -77,8 +77,7 @@ server.start();
 
 ## Changelog
 
-### v1.0.0
-- First public release
+History of releases is in the [changelog](./CHANGELOG.md).
 
 ## License
 
