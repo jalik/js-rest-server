@@ -129,14 +129,20 @@ class Server {
         const list = {};
 
         for (let i = 0; i < this._routes.length; i += 1) {
-            const api = this._routes[i];
+            const route = this._routes[i];
+            const routePath = route.getPath();
+            const routeMethod = route.getMethod();
 
-            if (!list.hasOwnProperty(api.getPath())) {
-                list[api.getPath()] = {
-                    methods: []
+            if (!list.hasOwnProperty(routePath)) {
+                list[routePath] = {
+                    methods: {}
                 };
             }
-            list[api.getPath()].methods.push(api.getMethod());
+
+            // Create route details
+            list[routePath].methods[routeMethod] = {
+                description: route.getDescription()
+            };
         }
         return list;
     }

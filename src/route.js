@@ -41,6 +41,7 @@ class Route {
     constructor(options) {
         // Default options
         this.options = extend({
+            description: null,
             method: null,
             path: null,
         }, options);
@@ -56,6 +57,9 @@ class Route {
             throw new Error(`Route path "${options.path}" must start with a slash "/"`);
         }
 
+        // The route description
+        this._description = options.description;
+
         // The route handler
         this._handler = options.handler;
 
@@ -67,8 +71,16 @@ class Route {
     }
 
     /**
+     * Returns the route description
+     * @return {string}
+     */
+    getDescription() {
+        return this._description;
+    }
+
+    /**
      * Returns the route handler
-     * @return {*}
+     * @return {function}
      */
     getHandler() {
         return this._handler;
@@ -76,7 +88,7 @@ class Route {
 
     /**
      * Returns the route method
-     * @return {string | *}
+     * @return {string}
      */
     getMethod() {
         return this._method;
@@ -84,7 +96,7 @@ class Route {
 
     /**
      * Returns the route path
-     * @return {*}
+     * @return {string}
      */
     getPath() {
         return this._path;
