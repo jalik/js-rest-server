@@ -1,6 +1,6 @@
 {
   "name": "@jalik/rest-server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A REST API builder based on Express.",
   "license": "MIT",
   "keywords": [
