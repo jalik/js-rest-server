@@ -40,6 +40,8 @@ import Server from "@jalik/rest-server/dist/server";
 
 // Define the server configuration
 const server = new Server({
+    // Return formatted JSON
+    formatJson: true,
     // Listen on this port
     port: 3001,
     // Automatically restart the server
