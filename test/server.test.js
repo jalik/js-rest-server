@@ -61,7 +61,7 @@ describe(`RestServer`, () => {
             method: "GET",
             path: "/new-api",
             handler(request, response) {
-                response.status(200).send({test:"ok"});
+                response.status(200).send({test: "ok"});
             }
         }));
 

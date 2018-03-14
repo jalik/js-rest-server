@@ -24,10 +24,50 @@
 
 import Route from "../src/route";
 
+const httpMethods = [
+    "CONNECT",
+    "DELETE",
+    "GET",
+    "HEAD",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+    "TRACE",
+];
+
 describe(`Route`, () => {
 
     it(`should be importable from package`, () => {
         expect(typeof Route).toEqual("function");
+    });
+
+    for (let i = 0; i < httpMethods.length; i += 1) {
+        describe(`new Route() with method = ${httpMethods[i]}`, () => {
+            it(`should not throw an exception`, () => {
+                expect(() => {
+                    new Route({
+                        method: httpMethods[i],
+                        path: "/",
+                        handler() {
+                        }
+                    });
+                }).not.toThrow();
+            });
+        });
+    }
+
+    describe(`new Route() with method = UNKNOWN`, () => {
+        it(`should throw an exception`, () => {
+            expect(() => {
+                new Route({
+                    method: "UNKNOWN",
+                    path: "/",
+                    handler() {
+                    }
+                });
+            }).toThrow();
+        });
     });
 
     describe(`getHandler()`, () => {

@@ -22,15 +22,32 @@
  * SOFTWARE.
  */
 
-import {extendRecursively} from "@jalik/extend";
+import {extendRecursively as extend} from "@jalik/extend";
+
+const httpMethods = [
+    "CONNECT",
+    "DELETE",
+    "GET",
+    "HEAD",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+    "TRACE",
+];
 
 class Route {
 
     constructor(options) {
-        this.options = extendRecursively({}, options);
+        // Default options
+        this.options = extend({
+            method: null,
+            path: null,
+        }, options);
 
-        if (typeof options.method !== "string") {
-            throw new Error("Route method is not valid");
+        // Check options
+        if (typeof options.method !== "string" || httpMethods.indexOf(options.method.toUpperCase()) === -1) {
+            throw new Error(`Route method must be one of ${httpMethods}`);
         }
         if (typeof options.path !== "string") {
             throw new Error("Route path is not valid");
@@ -49,14 +66,26 @@ class Route {
         this._path = options.path;
     }
 
+    /**
+     * Returns the route handler
+     * @return {*}
+     */
     getHandler() {
         return this._handler;
     }
 
+    /**
+     * Returns the route method
+     * @return {string | *}
+     */
     getMethod() {
         return this._method;
     }
 
+    /**
+     * Returns the route path
+     * @return {*}
+     */
     getPath() {
         return this._path;
     }

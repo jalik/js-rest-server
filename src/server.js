@@ -25,14 +25,15 @@
 import express from "express";
 import Logger from "@jalik/logger";
 import Observer from "@jalik/observer";
+import RootAPI from "./apis/root-api";
 import Route from "./route";
-import {extendRecursively} from "@jalik/extend";
+import {extendRecursively as extend} from "@jalik/extend";
 
 class Server {
 
     constructor(options) {
-        this.options = extendRecursively({
-            formatJson: false,
+        this.options = extend({
+            formatJson: true,
             port: 3000,
             restartOnChange: true
         }, options);
@@ -54,19 +55,40 @@ class Server {
 
         // The server instance
         this._server = null;
+
+        this.addMiddleware((req, res, next, server) => {
+            try {
+                // Format JSON output
+                if (server.options.formatJson) {
+                    server._instance.set("json spaces", 2);
+                }
+                // Add server logger as a middleware
+                server._logger.info(`${req.method} ${req.url}`);
+            }
+            catch (e) {
+                console.error(e.message);
+            }
+            next();
+        });
     }
 
     /**
      * Adds the middleware
-     * @param middleware
+     * @param {function} middleware
      */
     addMiddleware(middleware) {
-        this._instance.use(middleware);
+        if (typeof middleware !== "function") {
+            throw new TypeError("middleware must be a function");
+        }
+        // Wrap middleware to pass server as the context
+        this._instance.use((req, res, next) => {
+            middleware(req, res, next, this);
+        });
     }
 
     /**
      * Adds the REST API
-     * @param route
+     * @param {Route} route
      */
     addRoute(route) {
         if (!(route instanceof Route)) {
@@ -79,33 +101,24 @@ class Server {
         const method = route.getMethod().toLowerCase();
 
         if (typeof this._instance[method] === "function") {
-            this._instance[method](route.getPath(), route.getHandler());
+            this._instance[method](route.getPath(), (req, res, next) => {
+                route.getHandler()(req, res, next, this);
+            });
             this._routes.push(route);
             this._routeList = this.generateRouteList();
 
             // Restart server automatically
-            if (this._server && this.options.restartOnChange) {
-                this.restart();
-            }
+            this.autoRestart();
         }
     }
 
     /**
-     * Checks if the route exists
-     * @param {string} method
-     * @param {string} path
-     * @return {boolean}
+     * Restarts the server automatically
      */
-    routeExists(method, path) {
-        let exist = false;
-
-        for (let i = 0; i < this._routes.length; i += 1) {
-            if (path === this._routes[i].getPath() && method === this._routes[i].getMethod()) {
-                exist = true;
-                break;
-            }
+    autoRestart() {
+        if (this._server && this.options.restartOnChange) {
+            this.restart();
         }
-        return exist;
     }
 
     /**
@@ -126,14 +139,6 @@ class Server {
             list[api.getPath()].methods.push(api.getMethod());
         }
         return list;
-    }
-
-    /**
-     * Returns the route list
-     * @return {object}
-     */
-    getRouteList() {
-        return this._routeList;
     }
 
     /**
@@ -158,6 +163,14 @@ class Server {
      */
     getPort() {
         return this.options.port;
+    }
+
+    /**
+     * Returns the route list
+     * @return {object}
+     */
+    getRouteList() {
+        return this._routeList;
     }
 
     /**
@@ -187,29 +200,47 @@ class Server {
     }
 
     /**
+     * Checks if the route exists
+     * @param {string} method
+     * @param {string} path
+     * @return {boolean}
+     */
+    routeExists(method, path) {
+        let exist = false;
+
+        for (let i = 0; i < this._routes.length; i += 1) {
+            if (path === this._routes[i].getPath() && method === this._routes[i].getMethod()) {
+                exist = true;
+                break;
+            }
+        }
+        return exist;
+    }
+
+    /**
+     * Sets the server port
+     * @param {number} port
+     */
+    setPort(port) {
+        if (typeof port !== "number") {
+            throw new TypeError("Server port must be a number");
+        }
+        this.options.port = Math.round(port);
+        this.autoRestart();
+    }
+
+    /**
      * Starts the server
      */
     start() {
-        this._logger.info(`Starting REST server on port ${this.options.port}`);
-
-        // Creates the root API
-        const rootAPI = new Route({
-            method: "GET",
-            path: "/",
-            handler: (request, response) => {
-                if (this.options.formatJson) {
-                    this._instance.set("json spaces", 2);
-                }
-                response.status(200).send(this.getRouteList());
-            }
-        });
-
         // Add the root path
-        if (!this.routeExists(rootAPI.getMethod(), rootAPI.getPath())) {
-            this.addRoute(rootAPI);
+        if (!this.routeExists(RootAPI.getMethod(), RootAPI.getPath())) {
+            this.addRoute(RootAPI);
         }
 
+        // Listen request on defined port
         this._server = this._instance.listen(this.options.port);
+        this._logger.info(`Started REST server on port ${this.options.port}`);
     }
 
     /**
@@ -217,8 +248,9 @@ class Server {
      */
     stop() {
         if (this._server) {
-            this._logger.info(`Stopping REST server on port ${this.options.port}`);
             this._server.close();
+            this._server = null;
+            this._logger.info(`Stopped REST server on port ${this.options.port}`);
         }
     }
 }
