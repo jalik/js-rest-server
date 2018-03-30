@@ -22,90 +22,91 @@
  * SOFTWARE.
  */
 
-import Route from "../src/route";
+import Route from '../src/route';
 
 const httpMethods = [
-    "CONNECT",
-    "DELETE",
-    "GET",
-    "HEAD",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-    "TRACE",
+  'CONNECT',
+  'DELETE',
+  'GET',
+  'HEAD',
+  'OPTIONS',
+  'PATCH',
+  'POST',
+  'PUT',
+  'TRACE',
 ];
 
-describe(`Route`, () => {
+describe('Route', () => {
+  it('should be importable from package', () => {
+    expect(typeof Route).toEqual('function');
+  });
 
-    it(`should be importable from package`, () => {
-        expect(typeof Route).toEqual("function");
-    });
-
-    for (let i = 0; i < httpMethods.length; i += 1) {
-        describe(`new Route() with method = ${httpMethods[i]}`, () => {
-            it(`should not throw an exception`, () => {
-                expect(() => {
-                    new Route({
-                        method: httpMethods[i],
-                        path: "/",
-                        handler() {
-                        }
-                    });
-                }).not.toThrow();
-            });
-        });
-    }
-
-    describe(`new Route() with method = UNKNOWN`, () => {
-        it(`should throw an exception`, () => {
-            expect(() => {
-                new Route({
-                    method: "UNKNOWN",
-                    path: "/",
-                    handler() {
-                    }
-                });
-            }).toThrow();
-        });
-    });
-
-    describe(`getHandler()`, () => {
-        const route = new Route({
-            method: "get",
-            path: "/",
+  for (let i = 0; i < httpMethods.length; i += 1) {
+    describe(`new Route() with method = ${httpMethods[i]}`, () => {
+      it('should not throw an exception', () => {
+        expect(() => {
+          // eslint-disable-next-line
+          new Route({
+            method: httpMethods[i],
+            path: '/',
             handler() {
-            }
-        });
+            },
+          });
+        }).not.toThrow();
+      });
+    });
+  }
 
-        it(`should return the handler`, () => {
-            expect(typeof route.getHandler()).toEqual("function");
+  describe('new Route() with method = UNKNOWN', () => {
+    it('should throw an exception', () => {
+      expect(() => {
+        // eslint-disable-next-line
+        new Route({
+          method: 'UNKNOWN',
+          path: '/',
+          handler() {
+          },
         });
+      }).toThrow();
+    });
+  });
+
+  describe('getHandler()', () => {
+    const route = new Route({
+      method: 'get',
+      path: '/',
+      handler() {
+      },
     });
 
-    describe(`getMethod()`, () => {
-        const route = new Route({
-            method: "get",
-            path: "/",
-            handler() {
-            }
-        });
+    it('should return the handler', () => {
+      expect(typeof route.getHandler()).toEqual('function');
+    });
+  });
 
-        it(`should return the method in uppercase`, () => {
-            expect(route.getMethod()).toEqual("GET");
-        });
+  describe('getMethod()', () => {
+    const route = new Route({
+      method: 'get',
+      path: '/',
+      handler() {
+      },
     });
 
-    describe(`getPath()`, () => {
-        const route = new Route({
-            method: "get",
-            path: "/",
-            handler() {
-            }
-        });
-
-        it(`should return the path`, () => {
-            expect(route.getPath()).toEqual("/");
-        });
+    it('should return the method in uppercase', () => {
+      expect(route.getMethod()).toEqual('GET');
     });
+  });
+
+  describe('getPath()', () => {
+    const route = new Route({
+      method: 'get',
+      path: '/',
+      handler() {
+      },
+    });
+
+    it('should return the path', () => {
+      expect(route.getPath()).toEqual('/');
+    });
+  });
 });

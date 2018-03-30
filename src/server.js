@@ -22,243 +22,242 @@
  * SOFTWARE.
  */
 
-import express from "express";
-import Logger from "@jalik/logger";
-import Observer from "@jalik/observer";
-import RootAPI from "./apis/root-api";
-import Route from "./route";
-import {extendRecursively as extend} from "@jalik/extend";
+import { extendRecursively as extend } from '@jalik/extend';
+import Logger from '@jalik/logger';
+import Observer from '@jalik/observer';
+import express from 'express';
+import RootAPI from './apis/root-api';
+import Route from './route';
 
 class Server {
+  constructor(options) {
+    this.options = extend({
+      formatJson: true,
+      port: 3000,
+      restartOnChange: true,
+    }, options);
 
-    constructor(options) {
-        this.options = extend({
-            formatJson: true,
-            port: 3000,
-            restartOnChange: true
-        }, options);
+    // Create express server
+    this.instance = express();
 
-        // Create express server
-        this._instance = express();
+    // Create logger
+    this.logger = new Logger();
 
-        // Create logger
-        this._logger = new Logger();
+    // Create the observer
+    this.observer = new Observer(this);
 
-        // Create the observer
-        this._observer = new Observer(this);
+    // The server routes
+    this.routes = [];
 
-        // The server routes
-        this._routes = [];
+    // The route listing
+    this.routeList = {};
 
-        // The route listing
-        this._routeList = {};
+    // The server instance
+    this.server = null;
 
-        // The server instance
-        this._server = null;
-
-        this.addMiddleware((req, res, next, server) => {
-            try {
-                // Format JSON output
-                if (server.options.formatJson) {
-                    server._instance.set("json spaces", 2);
-                }
-                // Add server logger as a middleware
-                server._logger.info(`${req.method} ${req.url}`);
-            }
-            catch (e) {
-                console.error(e.message);
-            }
-            next();
-        });
-    }
-
-    /**
-     * Adds the middleware
-     * @param {function} middleware
-     */
-    addMiddleware(middleware) {
-        if (typeof middleware !== "function") {
-            throw new TypeError("middleware must be a function");
+    this.addMiddleware((req, res, next, server) => {
+      try {
+        // Format JSON output
+        if (server.options.formatJson) {
+          server.instance.set('json spaces', 2);
         }
-        // Wrap middleware to pass server as the context
-        this._instance.use((req, res, next) => {
-            middleware(req, res, next, this);
-        });
+        // Add server logger as a middleware
+        server.logger.info(`${req.method} ${req.url}`);
+      } catch (e) {
+        // eslint-disable-next-line
+        console.error(e.message);
+      }
+      next();
+    });
+  }
+
+  /**
+   * Adds the middleware
+   * @param {function} middleware
+   */
+  addMiddleware(middleware) {
+    if (typeof middleware !== 'function') {
+      throw new TypeError('middleware must be a function');
+    }
+    // Wrap middleware to pass server as the context
+    this.instance.use((req, res, next) => {
+      middleware(req, res, next, this);
+    });
+  }
+
+  /**
+   * Adds the REST API
+   * @param {Route} route
+   */
+  addRoute(route) {
+    if (!(route instanceof Route)) {
+      throw new TypeError('Not an instance of Route');
+    }
+    if (this.routeExists(route.getMethod(), route.getPath())) {
+      throw new Error('Route already exist');
     }
 
-    /**
-     * Adds the REST API
-     * @param {Route} route
-     */
-    addRoute(route) {
-        if (!(route instanceof Route)) {
-            throw new TypeError("Not an instance of Route");
-        }
-        if (this.routeExists(route.getMethod(), route.getPath())) {
-            throw new Error("Route already exist");
-        }
+    const method = route.getMethod().toLowerCase();
 
-        const method = route.getMethod().toLowerCase();
+    if (typeof this.instance[method] === 'function') {
+      this.instance[method](route.getPath(), (req, res, next) => {
+        route.getHandler()(req, res, next, this);
+      });
+      this.routes.push(route);
+      this.routeList = this.generateRouteList();
 
-        if (typeof this._instance[method] === "function") {
-            this._instance[method](route.getPath(), (req, res, next) => {
-                route.getHandler()(req, res, next, this);
-            });
-            this._routes.push(route);
-            this._routeList = this.generateRouteList();
+      // Restart server automatically
+      this.autoRestart();
+    }
+  }
 
-            // Restart server automatically
-            this.autoRestart();
-        }
+  /**
+   * Restarts the server automatically
+   */
+  autoRestart() {
+    if (this.server && this.options.restartOnChange) {
+      this.restart();
+    }
+  }
+
+  /**
+   * Generates the route list
+   * @return {object}
+   */
+  generateRouteList() {
+    const list = {};
+
+    for (let i = 0; i < this.routes.length; i += 1) {
+      const route = this.routes[i];
+      const routePath = route.getPath();
+      const routeMethod = route.getMethod();
+
+      if (typeof list[routePath] === 'undefined') {
+        list[routePath] = {
+          methods: {},
+        };
+      }
+
+      // Create route details
+      list[routePath].methods[routeMethod] = {
+        description: route.getDescription(),
+      };
+    }
+    return list;
+  }
+
+  /**
+   * Returns the Express instance
+   * @return {*|Function}
+   */
+  getInstance() {
+    return this.instance;
+  }
+
+  /**
+   * Returns the logger
+   * @return {Logger}
+   */
+  getLogger() {
+    return this.logger;
+  }
+
+  /**
+   * Returns the server port
+   * @return {number}
+   */
+  getPort() {
+    return this.options.port;
+  }
+
+  /**
+   * Returns the route list
+   * @return {object}
+   */
+  getRouteList() {
+    return this.routeList;
+  }
+
+  /**
+   * Removes an event listener
+   * @param event
+   * @param callback
+   */
+  off(event, callback) {
+    this.observer.detach(event, callback);
+  }
+
+  /**
+   * Adds an event listener
+   * @param event
+   * @param callback
+   */
+  on(event, callback) {
+    this.observer.attach(event, callback);
+  }
+
+  /**
+   * Restarts the server
+   */
+  restart() {
+    this.stop();
+    this.start();
+  }
+
+  /**
+   * Checks if the route exists
+   * @param {string} method
+   * @param {string} path
+   * @return {boolean}
+   */
+  routeExists(method, path) {
+    let exist = false;
+
+    for (let i = 0; i < this.routes.length; i += 1) {
+      if (path === this.routes[i].getPath() && method === this.routes[i].getMethod()) {
+        exist = true;
+        break;
+      }
+    }
+    return exist;
+  }
+
+  /**
+   * Sets the server port
+   * @param {number} port
+   */
+  setPort(port) {
+    if (typeof port !== 'number') {
+      throw new TypeError('Server port must be a number');
+    }
+    this.options.port = Math.round(port);
+    this.autoRestart();
+  }
+
+  /**
+   * Starts the server
+   */
+  start() {
+    // Add the root path
+    if (!this.routeExists(RootAPI.getMethod(), RootAPI.getPath())) {
+      this.addRoute(RootAPI);
     }
 
-    /**
-     * Restarts the server automatically
-     */
-    autoRestart() {
-        if (this._server && this.options.restartOnChange) {
-            this.restart();
-        }
+    // Listen request on defined port
+    this.server = this.instance.listen(this.options.port);
+    this.logger.info(`Started REST server on port ${this.options.port}`);
+  }
+
+  /**
+   * Stops the server
+   */
+  stop() {
+    if (this.server) {
+      this.server.close();
+      this.server = null;
+      this.logger.info(`Stopped REST server on port ${this.options.port}`);
     }
-
-    /**
-     * Generates the route list
-     * @return {object}
-     */
-    generateRouteList() {
-        const list = {};
-
-        for (let i = 0; i < this._routes.length; i += 1) {
-            const route = this._routes[i];
-            const routePath = route.getPath();
-            const routeMethod = route.getMethod();
-
-            if (!list.hasOwnProperty(routePath)) {
-                list[routePath] = {
-                    methods: {}
-                };
-            }
-
-            // Create route details
-            list[routePath].methods[routeMethod] = {
-                description: route.getDescription()
-            };
-        }
-        return list;
-    }
-
-    /**
-     * Returns the Express instance
-     * @return {*|Function}
-     */
-    getInstance() {
-        return this._instance;
-    }
-
-    /**
-     * Returns the logger
-     * @return {Logger}
-     */
-    getLogger() {
-        return this._logger;
-    }
-
-    /**
-     * Returns the server port
-     * @return {number}
-     */
-    getPort() {
-        return this.options.port;
-    }
-
-    /**
-     * Returns the route list
-     * @return {object}
-     */
-    getRouteList() {
-        return this._routeList;
-    }
-
-    /**
-     * Removes an event listener
-     * @param event
-     * @param callback
-     */
-    off(event, callback) {
-        this._observer.detach(event, callback);
-    }
-
-    /**
-     * Adds an event listener
-     * @param event
-     * @param callback
-     */
-    on(event, callback) {
-        this._observer.attach(event, callback);
-    }
-
-    /**
-     * Restarts the server
-     */
-    restart() {
-        this.stop();
-        this.start();
-    }
-
-    /**
-     * Checks if the route exists
-     * @param {string} method
-     * @param {string} path
-     * @return {boolean}
-     */
-    routeExists(method, path) {
-        let exist = false;
-
-        for (let i = 0; i < this._routes.length; i += 1) {
-            if (path === this._routes[i].getPath() && method === this._routes[i].getMethod()) {
-                exist = true;
-                break;
-            }
-        }
-        return exist;
-    }
-
-    /**
-     * Sets the server port
-     * @param {number} port
-     */
-    setPort(port) {
-        if (typeof port !== "number") {
-            throw new TypeError("Server port must be a number");
-        }
-        this.options.port = Math.round(port);
-        this.autoRestart();
-    }
-
-    /**
-     * Starts the server
-     */
-    start() {
-        // Add the root path
-        if (!this.routeExists(RootAPI.getMethod(), RootAPI.getPath())) {
-            this.addRoute(RootAPI);
-        }
-
-        // Listen request on defined port
-        this._server = this._instance.listen(this.options.port);
-        this._logger.info(`Started REST server on port ${this.options.port}`);
-    }
-
-    /**
-     * Stops the server
-     */
-    stop() {
-        if (this._server) {
-            this._server.close();
-            this._server = null;
-            this._logger.info(`Stopped REST server on port ${this.options.port}`);
-        }
-    }
+  }
 }
 
 export default Server;

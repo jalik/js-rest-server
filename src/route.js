@@ -22,85 +22,84 @@
  * SOFTWARE.
  */
 
-import {extendRecursively as extend} from "@jalik/extend";
+import { extendRecursively as extend } from '@jalik/extend';
 
 const httpMethods = [
-    "CONNECT",
-    "DELETE",
-    "GET",
-    "HEAD",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-    "TRACE",
+  'CONNECT',
+  'DELETE',
+  'GET',
+  'HEAD',
+  'OPTIONS',
+  'PATCH',
+  'POST',
+  'PUT',
+  'TRACE',
 ];
 
 class Route {
+  constructor(options) {
+    // Default options
+    this.options = extend({
+      description: null,
+      method: null,
+      path: null,
+    }, options);
 
-    constructor(options) {
-        // Default options
-        this.options = extend({
-            description: null,
-            method: null,
-            path: null,
-        }, options);
-
-        // Check options
-        if (typeof options.method !== "string" || httpMethods.indexOf(options.method.toUpperCase()) === -1) {
-            throw new Error(`Route method must be one of ${httpMethods}`);
-        }
-        if (typeof options.path !== "string") {
-            throw new Error("Route path is not valid");
-        }
-        if (!/^\//.test(options.path)) {
-            throw new Error(`Route path "${options.path}" must start with a slash "/"`);
-        }
-
-        // The route description
-        this._description = options.description;
-
-        // The route handler
-        this._handler = options.handler;
-
-        // The route method
-        this._method = options.method.toUpperCase();
-
-        // The route path
-        this._path = options.path;
+    // Check options
+    if (typeof options.method !== 'string' || httpMethods.indexOf(options.method.toUpperCase()) === -1) {
+      throw new Error(`Route method must be one of ${httpMethods}`);
+    }
+    if (typeof options.path !== 'string') {
+      throw new Error('Route path is not valid');
+    }
+    if (!/^\//.test(options.path)) {
+      throw new Error(`Route path "${options.path}" must start with a slash "/"`);
     }
 
-    /**
-     * Returns the route description
-     * @return {string}
-     */
-    getDescription() {
-        return this._description;
-    }
+    // The route description
+    this.description = options.description;
 
-    /**
-     * Returns the route handler
-     * @return {function}
-     */
-    getHandler() {
-        return this._handler;
-    }
+    // The route handler
+    this.handler = options.handler;
 
-    /**
-     * Returns the route method
-     * @return {string}
-     */
-    getMethod() {
-        return this._method;
-    }
+    // The route method
+    this.method = options.method.toUpperCase();
 
-    /**
-     * Returns the route path
-     * @return {string}
-     */
-    getPath() {
-        return this._path;
-    }
+    // The route path
+    this.path = options.path;
+  }
+
+  /**
+   * Returns the route description
+   * @return {string}
+   */
+  getDescription() {
+    return this.description;
+  }
+
+  /**
+   * Returns the route handler
+   * @return {function}
+   */
+  getHandler() {
+    return this.handler;
+  }
+
+  /**
+   * Returns the route method
+   * @return {string}
+   */
+  getMethod() {
+    return this.method;
+  }
+
+  /**
+   * Returns the route path
+   * @return {string}
+   */
+  getPath() {
+    return this.path;
+  }
 }
 
 export default Route;

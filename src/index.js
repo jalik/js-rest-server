@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-import Route from "./route";
-import Server from "./server";
+import Route from './route';
+import Server from './server';
 
 export default {
-    Route: Route,
-    Server: Server
-}
+  Route,
+  Server,
+};

@@ -22,16 +22,16 @@
  * SOFTWARE.
  */
 
-import Route from "../route";
+import Route from '../route';
 
 const RootAPI = new Route({
-    method: "GET",
-    path: "/",
-    handler(req, res, next, server) {
-        res.status(200).send({
-            routes: server.getRouteList()
-        });
-    }
+  method: 'GET',
+  path: '/',
+  handler(req, res, next, server) {
+    res.status(200).send({
+      routes: server.getRouteList(),
+    });
+  },
 });
 
 export default RootAPI;

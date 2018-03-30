@@ -22,63 +22,58 @@
  * SOFTWARE.
  */
 
-import request from "supertest";
-import Route from "../src/route";
-import Server from "../src/server";
+import request from 'supertest';
+import Route from '../src/route';
+import Server from '../src/server';
 
-describe(`RestServer`, () => {
+describe('RestServer', () => {
+  const server = new Server({
+    port: 3001,
+  });
 
-    const server = new Server({
-        port: 3001
-    });
+  afterAll(() => {
+    server.stop();
+  });
 
-    afterAll(() => {
-        server.stop();
-    });
+  it('should be importable from package', () => {
+    expect(typeof Server).toEqual('function');
+  });
 
-    it(`should be importable from package`, () => {
-        expect(typeof Server).toEqual("function");
-    });
+  server.addRoute(new Route({
+    method: 'GET',
+    path: '/date',
+    handler(req, res) {
+      res.status(200).send({ date: new Date() });
+    },
+  }));
 
+  describe('start()', () => {
+    server.start();
+
+    it('should start the server', done =>
+      request(server.getInstance()).get('/date').expect(200, done));
+  });
+
+  describe('addRoute()', () => {
     server.addRoute(new Route({
-        method: "GET",
-        path: "/date",
-        handler(request, response) {
-            response.status(200).send({date: new Date()});
-        }
+      method: 'GET',
+      path: '/new-api',
+      handler(req, res) {
+        res.status(200).send({ test: 'ok' });
+      },
     }));
 
-    describe(`start()`, () => {
-        server.start();
+    it('should add an API', done =>
+      request(server.getInstance()).get('/new-api').expect(200, done));
+  });
 
-        it(`should start the server`, (done) => {
-            return request(server.getInstance()).get("/date").expect(200, done);
-        });
-    });
+  describe('GET /date', () => {
+    it('should return a JSON with 200 response', done =>
+      request(server.getInstance()).get('/date').expect(200, done));
+  });
 
-    describe(`addRoute()`, () => {
-        server.addRoute(new Route({
-            method: "GET",
-            path: "/new-api",
-            handler(request, response) {
-                response.status(200).send({test: "ok"});
-            }
-        }));
-
-        it(`should add an API`, (done) => {
-            return request(server.getInstance()).get("/new-api").expect(200, done);
-        });
-    });
-
-    describe(`GET /date`, () => {
-        it(`should return a JSON with 200 response`, (done) => {
-            return request(server.getInstance()).get("/date").expect(200, done);
-        });
-    });
-
-    describe(`GET /unknown`, () => {
-        it(`should return a 404 response`, (done) => {
-            return request(server.getInstance()).get("/unknown").expect(404, done);
-        });
-    });
+  describe('GET /unknown', () => {
+    it('should return a 404 response', done =>
+      request(server.getInstance()).get('/unknown').expect(404, done));
+  });
 });
