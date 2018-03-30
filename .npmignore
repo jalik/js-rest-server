@@ -11,7 +11,3 @@ src
 
 # Ignore tests
 test
-
-# Ignore compiled package
-aio
-example
