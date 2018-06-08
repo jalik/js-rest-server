@@ -1,6 +1,7 @@
 # Changelog
 
-## UNRELEASED
+## 1.1.1
+- Updates dependencies
 - Adds `Route.getDescription()`
 - Adds option `description` to `Route` constructor
 
