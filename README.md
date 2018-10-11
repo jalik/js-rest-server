@@ -1,4 +1,4 @@
-# REST Server
+# @jalik/rest-server
 
 ## Introduction
 
