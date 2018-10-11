@@ -33,9 +33,9 @@
     "watch": "npx gulp watch"
   },
   "dependencies": {
-    "@jalik/extend": "^1.0.2",
+    "@jalik/extend": "^1.0.3",
     "@jalik/logger": "^1.0.5",
-    "@jalik/observer": "^1.0.3",
+    "@jalik/observer": "^1.0.5",
     "express": "^4.16.3"
   },
   "devDependencies": {
@@ -55,6 +55,6 @@
     "gulp-babel": "^8.0.0",
     "gulp-eslint": "^5.0.0",
     "jest": "^23.6.0",
-    "supertest": "^3.1.0"
+    "supertest": "^3.3.0"
   }
 }
