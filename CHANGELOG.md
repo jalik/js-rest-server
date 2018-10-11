@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.2
+- Updates dependencies
+
 ## 1.1.1
 - Updates dependencies
 - Adds `Route.getDescription()`
