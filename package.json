@@ -17,10 +17,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jalik/jk-rest-server.git"
+    "url": "https://github.com/jalik/js-rest-server.git"
   },
   "bugs": {
-    "url": "https://github.com/jalik/jk-rest-server/issues"
+    "url": "https://github.com/jalik/js-rest-server/issues"
   },
   "main": "dist/index.js",
   "scripts": {
