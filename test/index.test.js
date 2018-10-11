@@ -43,4 +43,3 @@ describe('Server', () => {
     expect(typeof Index.Server).toEqual('function');
   });
 });
-
