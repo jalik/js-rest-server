@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import { extendRecursively as extend } from '@jalik/extend';
+import extend from '@jalik/extend';
 
 const httpMethods = [
   'CONNECT',
