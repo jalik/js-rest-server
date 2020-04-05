@@ -5,10 +5,9 @@
     "jest": true,
     "node": true
   },
-  "extends": "airbnb",
+  "extends": "airbnb-base",
   "plugins": [
     "import",
-    "jest",
-    "jsx-a11y"
+    "jest"
   ]
 }

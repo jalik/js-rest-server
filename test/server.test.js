@@ -50,7 +50,7 @@ describe('RestServer', () => {
   describe('start()', () => {
     server.start();
 
-    it('should start the server', done => request(server.getInstance()).get('/date').expect(200, done));
+    it('should start the server', (done) => request(server.getInstance()).get('/date').expect(200, done));
   });
 
   describe('addRoute()', () => {
@@ -62,14 +62,14 @@ describe('RestServer', () => {
       },
     }));
 
-    it('should add an API', done => request(server.getInstance()).get('/new-api').expect(200, done));
+    it('should add an API', (done) => request(server.getInstance()).get('/new-api').expect(200, done));
   });
 
   describe('GET /date', () => {
-    it('should return a JSON with 200 response', done => request(server.getInstance()).get('/date').expect(200, done));
+    it('should return a JSON with 200 response', (done) => request(server.getInstance()).get('/date').expect(200, done));
   });
 
   describe('GET /unknown', () => {
-    it('should return a 404 response', done => request(server.getInstance()).get('/unknown').expect(404, done));
+    it('should return a 404 response', (done) => request(server.getInstance()).get('/unknown').expect(404, done));
   });
 });
