@@ -32,7 +32,6 @@ import Route from './Route';
 class Server {
   constructor(options) {
     this.options = extend({
-      formatJson: true,
       port: 3000,
       restartOnChange: true,
     }, options);
@@ -51,19 +50,6 @@ class Server {
 
     // The server
     this.server = null;
-
-    this.addMiddleware((req, resp, next, server) => {
-      try {
-        // Format JSON output
-        if (server.options.formatJson) {
-          server.express.set('json spaces', 2);
-        }
-      } catch (error) {
-        // eslint-disable-next-line
-        console.error(error.message);
-      }
-      next();
-    });
   }
 
   /**
