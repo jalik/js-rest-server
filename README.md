@@ -1,10 +1,22 @@
 # @jalik/rest-server
 
+![GitHub package.json version](https://img.shields.io/github/package-json/v/jalik/js-rest-server.svg)
+[![Build Status](https://travis-ci.com/jalik/js-rest-server.svg?branch=master)](https://travis-ci.com/jalik/js-rest-server)
+![GitHub](https://img.shields.io/github/license/jalik/js-rest-server.svg)
+![GitHub last commit](https://img.shields.io/github/last-commit/jalik/js-rest-server.svg)
+[![GitHub issues](https://img.shields.io/github/issues/jalik/js-rest-server.svg)](https://github.com/jalik/js-rest-server/issues)
+![npm](https://img.shields.io/npm/dt/@jalik/rest-server.svg)
+
 ## Introduction
 
-This is a REST API builder based on the excellent [Express](https://expressjs.com/) web server. The main goal is to simplify the creation and modification of those APIs.
+This is a REST API server based on the excellent [Express](https://expressjs.com/) web server.
+The main goal is to simplify the management of any APIs.
+Note that this server is independent and cannot work as a middleware in an existing express application, it needs to run on a dedicated port.
 
-**The code is tested against bugs.**
+## Why using this ?
+
+- The express server restarts automatically whenever a route is added or removed, or if the port changes
+- It allows to create routes objects which can be used to generate API documentation
 
 ## Creating a REST API
 
@@ -14,18 +26,19 @@ Note that the handler is an Express handler (see [https://expressjs.com/en/start
 Since you may have a lot of APIs, it's recommended to put them in separate files like below.
 
 ```js
-// ./api/get-date.js
-import { Route } from "@jalik/rest-server";
+import { Route } from '@jalik/rest-server';
 
 const GetDateAPI = new Route({
-    method: "GET",
-    path: "/v1/date",
-    handler(request, response) {
-        response.status(200).send({
-            date: new Date()
-        });
-    }
+  cors: false,
+  method: 'GET',
+  path: '/v1/date',
+  handler(req, resp) {
+    resp.status(200).end(JSON.stringify({ 
+      date: new Date().toISOString()
+    }));
+  }
 });
+
 export default GetDateAPI;
 ```
 
@@ -34,45 +47,42 @@ export default GetDateAPI;
 To serve the APIs you've created, you need a web server, so let see how to do that.
 
 ```js
-// ./server.js
-import GetDateAPI from "./api/get-date";
-import Server from "@jalik/rest-server";
+import Server from '@jalik/rest-server';
 
-// Define the server configuration
+// Setup server
 const server = new Server({
-    // Return formatted JSON
-    formatJson: true,
-    // Listen on this port
-    port: 3001,
-    // Automatically restart the server
-    // if an API has been added or removed.
-    restartOnChange: true,
+  // Return formatted JSON
+  formatJson: true,
+  // Listen on this port
+  port: 3001,
+  // Automatically restart the server
+  // if an API has been added or removed.
+  restartOnChange: true,
 });
 
-// Add the APIs to the server
-server.addRoute(GetDateAPI);
+// Add routes
+// ... server.addRoute(route);
+// ... server.addRoute(route);
 
-// And finally start the server
+// Finally start the server
 server.start();
 ```
 
 ## Adding a middleware
 
 ```js
-import Server from "@jalik/rest-server";
+import Server from '@jalik/rest-server';
 
-// Define the server configuration
+// Setup server
 const server = new Server({
-    port: 3001
+  port: 3001
 });
 
-// Add a middleware that logs request date, method and URL to the console
+// Log request date, method and URL to the console
 server.addMiddleware((req, resp, next) => {
-    console.log(`${new Date()} ${req.method} ${req.url}`);
-    next();
+  console.log(`${new Date()} ${req.method} ${req.url}`);
+  next();
 });
-
-// APIs definition...
 
 server.start();
 ```
