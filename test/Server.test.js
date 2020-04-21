@@ -22,54 +22,54 @@
  * SOFTWARE.
  */
 
-import request from 'supertest';
+import fetch from 'node-fetch';
 import Route from '../src/Route';
 import Server from '../src/Server';
 
-describe('RestServer', () => {
-  const server = new Server({
-    port: 3001,
-  });
+const testAPI = new Route({
+  method: 'GET',
+  path: '/test',
+  handler(req, res) {
+    res.status(200).send('OK');
+  },
+});
 
+const test2API = new Route({
+  method: 'GET',
+  path: '/test2',
+  handler(req, res) {
+    res.status(302).send('FOUND');
+  },
+});
+
+const server = new Server({
+  port: 3001,
+});
+server.addRoute(testAPI);
+const baseUrl = `http://localhost:${server.getPort()}`;
+
+describe('Server', () => {
   afterAll(() => {
     server.stop();
   });
 
-  it('should be importable from package', () => {
-    expect(typeof Server).toEqual('function');
-  });
-
-  server.addRoute(new Route({
-    method: 'GET',
-    path: '/date',
-    handler(req, res) {
-      res.status(200).send({ date: new Date() });
-    },
-  }));
-
   describe('start()', () => {
     server.start();
 
-    it('should start the server', (done) => request(server.getInstance()).get('/date').expect(200, done));
+    it('should start the server', () => (
+      fetch(`${baseUrl}/test`).then((resp) => {
+        expect(resp.status).toBe(200);
+      })
+    ));
   });
 
   describe('addRoute()', () => {
-    server.addRoute(new Route({
-      method: 'GET',
-      path: '/new-api',
-      handler(req, res) {
-        res.status(200).send({ test: 'ok' });
-      },
-    }));
+    server.addRoute(test2API);
 
-    it('should add an API', (done) => request(server.getInstance()).get('/new-api').expect(200, done));
-  });
-
-  describe('GET /date', () => {
-    it('should return a JSON with 200 response', (done) => request(server.getInstance()).get('/date').expect(200, done));
-  });
-
-  describe('GET /unknown', () => {
-    it('should return a 404 response', (done) => request(server.getInstance()).get('/unknown').expect(404, done));
+    it('should add an API and restart the server', () => (
+      fetch(`${baseUrl}/test2`).then((resp) => {
+        expect(resp.status).toBe(302);
+      })
+    ));
   });
 });
