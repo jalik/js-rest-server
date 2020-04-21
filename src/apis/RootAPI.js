@@ -27,8 +27,8 @@ import Route from '../Route';
 const RootAPI = new Route({
   method: 'GET',
   path: '/',
-  handler(req, res, next, server) {
-    res.status(200).send({
+  handler(req, resp, next, server) {
+    resp.status(200).send({
       routes: server.getRouteList(),
     });
   },

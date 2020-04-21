@@ -52,7 +52,7 @@ class Server {
     // The server
     this.server = null;
 
-    this.addMiddleware((req, res, next, server) => {
+    this.addMiddleware((req, resp, next, server) => {
       try {
         // Format JSON output
         if (server.options.formatJson) {
@@ -75,8 +75,8 @@ class Server {
       throw new TypeError('middleware must be a function');
     }
     // Wrap middleware to pass server as the context
-    this.express.use((req, res, next) => {
-      middleware(req, res, next, this);
+    this.express.use((req, resp, next) => {
+      middleware(req, resp, next, this);
     });
   }
 

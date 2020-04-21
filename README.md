@@ -67,7 +67,7 @@ const server = new Server({
 });
 
 // Add a middleware that logs request date, method and URL to the console
-server.addMiddleware((req, res, next) => {
+server.addMiddleware((req, resp, next) => {
     console.log(`${new Date()} ${req.method} ${req.url}`);
     next();
 });
