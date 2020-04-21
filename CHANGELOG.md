@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.1
+- Removes `formatJson` option in `Server` constructor
+- Renames method `getCORS()` to `getCors()` in `Route`
+- Adds `corsOptions` to `Route` constructor
+
 ## 2.0.0
 - Removes the 4th argument passed to middleware and route handlers
 - Renames method `getInstance()` to `getExpress()` in `Server`

@@ -15,8 +15,9 @@ Note that this server is independent and cannot work as a middleware in an exist
 
 ## Why using this ?
 
-- The express server restarts automatically whenever a route is added or removed, or if the port changes
-- It allows to create routes objects which can be used to generate API documentation
+- The server restarts automatically when a route is added or removed, or if the port changed
+- Routes are objects which can be used to generate API documentation
+- You can use any express middleware as it is based on it
 
 ## Creating a REST API
 
