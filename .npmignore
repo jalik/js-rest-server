@@ -1,5 +1,5 @@
 # Project settings
-.idea/
+/.idea/
 *.iml
 
 # Tools settings
@@ -11,11 +11,8 @@
 babel.config.js
 gulpfile.js
 
-# npm packages
-node_modules/
+# Dependencies
+/node_modules/
 
-# Source files
-/src/
-
-# Test files
+# Tests
 /test/

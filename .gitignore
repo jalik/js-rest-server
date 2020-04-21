@@ -1,9 +1,9 @@
 # Project settings
-.idea/
+/.idea/
 *.iml
 
-# npm packages
-node_modules/
+# Dependencies
+/node_modules/
 
 # Compiled files
 /dist/
