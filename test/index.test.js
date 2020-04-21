@@ -25,13 +25,13 @@
 import Server, { Route } from '../src/index';
 
 describe('Route', () => {
-  it('should be importable from index', () => {
+  it('should be importable', () => {
     expect(typeof Route).toEqual('function');
   });
 });
 
 describe('Server', () => {
-  it('should be importable from index', () => {
+  it('should be importable', () => {
     expect(typeof Server).toEqual('function');
   });
 });
