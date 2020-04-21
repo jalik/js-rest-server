@@ -84,10 +84,12 @@ class Server {
       const chain = [];
 
       // Allow CORS requests on the route.
-      if (route.getCORS() === true) {
-        chain.push(cors());
+      if (route.getCors() === true) {
+        const corsOptions = route.getCorsOptions();
+        const corsHandler = cors(corsOptions);
+        chain.push(corsHandler);
         // Allow pre-flight requests using OPTIONS.
-        this.express.options(route.getPath(), cors());
+        this.express.options(route.getPath(), corsHandler);
       }
 
       this.express[method](route.getPath(), ...chain, route.getHandler());

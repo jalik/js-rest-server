@@ -38,9 +38,18 @@ const httpMethods = [
 
 class Route {
   constructor(options) {
-    // Default options
     this.options = extend({
       cors: false,
+      corsOptions: {
+        allowedHeaders: undefined,
+        credentials: undefined,
+        exposedHeaders: undefined,
+        maxAge: undefined,
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        optionsSuccessStatus: 204,
+        origin: '*',
+        preflightContinue: false,
+      },
       description: null,
       method: null,
       path: null,
@@ -59,6 +68,7 @@ class Route {
 
     // Enable CORS.
     this.cors = options.cors;
+    this.corsOptions = options.corsOptions;
 
     // Route description
     this.description = options.description;
@@ -74,11 +84,19 @@ class Route {
   }
 
   /**
-   * Returns CORS settings.
+   * Checks if CORS is enabled.
    * @return {boolean|any}
    */
-  getCORS() {
+  getCors() {
     return this.cors;
+  }
+
+  /**
+   * Returns CORS options.
+   * @return {*}
+   */
+  getCorsOptions() {
+    return this.corsOptions;
   }
 
   /**

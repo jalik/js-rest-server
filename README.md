@@ -84,6 +84,29 @@ server.addMiddleware((req, resp, next) => {
 server.start();
 ```
 
+## Enabling CORS
+
+To enable CORS on a route, just set the `cors` option to `true` when creating a route,
+and eventually define the `corsOptions` for more control.
+
+```js
+import { Route } from '@jalik/rest-server';
+
+const AuthAPI = new Route({
+  cors: true,
+  corsOptions: {
+    origin: 'http://example.com'
+  },
+  method: 'POST',
+  path: '/auth',
+  handler(req, resp, next) {
+    // logic...
+  }
+});
+```
+
+For more details, see https://expressjs.com/en/resources/middleware/cors.html#configuring-cors.
+
 ## Changelog
 
 History of releases is in the [changelog](./CHANGELOG.md).
