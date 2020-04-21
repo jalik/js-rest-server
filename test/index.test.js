@@ -22,24 +22,16 @@
  * SOFTWARE.
  */
 
-import Index from '../src/index';
-import Route from '../src/route';
-import Server from '../src/server';
+import Server, { Route } from '../src/index';
 
 describe('Route', () => {
-  it('should be importable from package', () => {
-    expect(typeof Route).toEqual('function');
-  });
   it('should be importable from index', () => {
-    expect(typeof Index.Route).toEqual('function');
+    expect(typeof Route).toEqual('function');
   });
 });
 
 describe('Server', () => {
-  it('should be importable from package', () => {
-    expect(typeof Server).toEqual('function');
-  });
   it('should be importable from index', () => {
-    expect(typeof Index.Server).toEqual('function');
+    expect(typeof Server).toEqual('function');
   });
 });

@@ -15,7 +15,7 @@ Since you may have a lot of APIs, it's recommended to put them in separate files
 
 ```js
 // ./api/get-date.js
-import Route from "@jalik/rest-server/dist/route";
+import { Route } from "@jalik/rest-server";
 
 const GetDateAPI = new Route({
     method: "GET",
@@ -36,7 +36,7 @@ To serve the APIs you've created, you need a web server, so let see how to do th
 ```js
 // ./server.js
 import GetDateAPI from "./api/get-date";
-import Server from "@jalik/rest-server/dist/server";
+import Server from "@jalik/rest-server";
 
 // Define the server configuration
 const server = new Server({
@@ -59,7 +59,7 @@ server.start();
 ## Adding a middleware
 
 ```js
-import Server from "@jalik/rest-server/dist/server";
+import Server from "@jalik/rest-server";
 
 // Define the server configuration
 const server = new Server({
