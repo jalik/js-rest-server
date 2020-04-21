@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.0
+- Removes the 4th argument passed to middleware and route handlers
+- Renames method `getInstance()` to `getExpress()` in `Server`
+- Renames files to match exported object name
+- Adds `cors` options to `Route` constructor to allow CORS requests
+- Removes default logging from `Server`
+- Updates dependencies
+
 ## 1.1.3
 - Updates dependencies
 

@@ -76,7 +76,7 @@ class Server {
     }
     // Wrap middleware to pass server as the context
     this.express.use((req, resp, next) => {
-      middleware(req, resp, next, this);
+      middleware(req, resp, next);
     });
   }
 
