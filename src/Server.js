@@ -38,7 +38,7 @@ class Server {
     }, options);
 
     // Create express server
-    this.instance = express();
+    this.express = express();
 
     // Create logger
     this.logger = new Logger();
@@ -52,14 +52,14 @@ class Server {
     // The route listing
     this.routeList = {};
 
-    // The server instance
+    // The server
     this.server = null;
 
     this.addMiddleware((req, res, next, server) => {
       try {
         // Format JSON output
         if (server.options.formatJson) {
-          server.instance.set('json spaces', 2);
+          server.express.set('json spaces', 2);
         }
         // Add server logger as a middleware
         server.logger.info(`${req.method} ${req.url}`);
@@ -80,7 +80,7 @@ class Server {
       throw new TypeError('middleware must be a function');
     }
     // Wrap middleware to pass server as the context
-    this.instance.use((req, res, next) => {
+    this.express.use((req, res, next) => {
       middleware(req, res, next, this);
     });
   }
@@ -99,8 +99,8 @@ class Server {
 
     const method = route.getMethod().toLowerCase();
 
-    if (typeof this.instance[method] === 'function') {
-      this.instance[method](route.getPath(), (req, res, next) => {
+    if (typeof this.express[method] === 'function') {
+      this.express[method](route.getPath(), (req, res, next) => {
         route.getHandler()(req, res, next, this);
       });
       this.routes.push(route);
@@ -150,8 +150,8 @@ class Server {
    * Returns the Express instance
    * @return {*|Function}
    */
-  getInstance() {
-    return this.instance;
+  getExpress() {
+    return this.express;
   }
 
   /**
@@ -244,7 +244,7 @@ class Server {
     }
 
     // Listen request on defined port
-    this.server = this.instance.listen(this.options.port);
+    this.server = this.express.listen(this.options.port);
     this.logger.info(`Started REST server on port ${this.options.port}`);
   }
 
