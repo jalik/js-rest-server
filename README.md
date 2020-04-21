@@ -51,9 +51,6 @@ import Server from '@jalik/rest-server';
 
 // Setup server
 const server = new Server({
-  // Return formatted JSON
-  formatJson: true,
-  // Listen on this port
   port: 3001,
   // Automatically restart the server
   // if an API has been added or removed.

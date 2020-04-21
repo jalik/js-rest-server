@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Karl STEIN
+ * Copyright (c) 2020 Karl STEIN
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -60,8 +60,8 @@ gulp.task('eslint', () => gulp.src([
 // Prepare files for production
 gulp.task('prepare', gulp.series(
   'clean',
-  'eslint',
   'build',
+  'eslint',
 ));
 
 // Rebuild JS automatically
