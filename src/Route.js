@@ -40,6 +40,7 @@ class Route {
   constructor(options) {
     // Default options
     this.options = extend({
+      cors: false,
       description: null,
       method: null,
       path: null,
@@ -56,17 +57,28 @@ class Route {
       throw new Error(`Route path "${options.path}" must start with a slash "/"`);
     }
 
-    // The route description
+    // Enable CORS.
+    this.cors = options.cors;
+
+    // Route description
     this.description = options.description;
 
-    // The route handler
+    // Route handler
     this.handler = options.handler;
 
-    // The route method
+    // Route method
     this.method = options.method.toUpperCase();
 
-    // The route path
+    // Route path
     this.path = options.path;
+  }
+
+  /**
+   * Returns CORS settings.
+   * @return {boolean|any}
+   */
+  getCORS() {
+    return this.cors;
   }
 
   /**

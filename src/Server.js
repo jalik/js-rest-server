@@ -24,6 +24,7 @@
 
 import extend from '@jalik/extend';
 import Observer from '@jalik/observer';
+import cors from 'cors';
 import express from 'express';
 import RootAPI from './apis/RootAPI';
 import Route from './Route';
@@ -94,9 +95,16 @@ class Server {
     const method = route.getMethod().toLowerCase();
 
     if (typeof this.express[method] === 'function') {
-      this.express[method](route.getPath(), (req, res, next) => {
-        route.getHandler()(req, res, next, this);
-      });
+      const chain = [];
+
+      // Allow CORS requests on the route.
+      if (route.getCORS() === true) {
+        chain.push(cors());
+        // Allow pre-flight requests using OPTIONS.
+        this.express.options(route.getPath(), cors());
+      }
+
+      this.express[method](route.getPath(), ...chain, route.getHandler());
       this.routes.push(route);
       this.routeList = this.generateRouteList();
 
