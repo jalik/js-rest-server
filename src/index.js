@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import Server from './server';
+import Server from './Server';
 
-export { default as Route } from './route';
+export { default as Route } from './Route';
 export default Server;

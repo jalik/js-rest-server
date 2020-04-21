@@ -26,8 +26,8 @@ import extend from '@jalik/extend';
 import Logger from '@jalik/logger';
 import Observer from '@jalik/observer';
 import express from 'express';
-import RootAPI from './apis/root-api';
-import Route from './route';
+import RootAPI from './apis/RootAPI';
+import Route from './Route';
 
 class Server {
   constructor(options) {

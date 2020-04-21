@@ -23,8 +23,8 @@
  */
 
 import request from 'supertest';
-import Route from '../src/route';
-import Server from '../src/server';
+import Route from '../src/Route';
+import Server from '../src/Server';
 
 describe('RestServer', () => {
   const server = new Server({

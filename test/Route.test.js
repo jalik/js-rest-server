@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import Route from '../src/route';
+import Route from '../src/Route';
 
 const httpMethods = [
   'CONNECT',

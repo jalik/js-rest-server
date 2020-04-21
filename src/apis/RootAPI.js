@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import Route from '../route';
+import Route from '../Route';
 
 const RootAPI = new Route({
   method: 'GET',
