@@ -23,7 +23,6 @@
  */
 
 import extend from '@jalik/extend';
-import Logger from '@jalik/logger';
 import Observer from '@jalik/observer';
 import express from 'express';
 import RootAPI from './apis/RootAPI';
@@ -39,9 +38,6 @@ class Server {
 
     // Create express server
     this.express = express();
-
-    // Create logger
-    this.logger = new Logger();
 
     // Create the observer
     this.observer = new Observer(this);
@@ -61,11 +57,9 @@ class Server {
         if (server.options.formatJson) {
           server.express.set('json spaces', 2);
         }
-        // Add server logger as a middleware
-        server.logger.info(`${req.method} ${req.url}`);
-      } catch (e) {
+      } catch (error) {
         // eslint-disable-next-line
-        console.error(e.message);
+        console.error(error.message);
       }
       next();
     });
@@ -155,14 +149,6 @@ class Server {
   }
 
   /**
-   * Returns the logger
-   * @return {Logger}
-   */
-  getLogger() {
-    return this.logger;
-  }
-
-  /**
    * Returns the server port
    * @return {number}
    */
@@ -245,7 +231,6 @@ class Server {
 
     // Listen request on defined port
     this.server = this.express.listen(this.options.port);
-    this.logger.info(`Started REST server on port ${this.options.port}`);
   }
 
   /**
@@ -255,7 +240,6 @@ class Server {
     if (this.server) {
       this.server.close();
       this.server = null;
-      this.logger.info(`Stopped REST server on port ${this.options.port}`);
     }
   }
 }
