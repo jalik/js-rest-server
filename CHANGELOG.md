@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.2
+- Upgrades dependencies
+
 ## 2.0.1
 - Removes `formatJson` option in `Server` constructor
 - Renames method `getCORS()` to `getCors()` in `Route`
@@ -11,16 +14,16 @@
 - Renames files to match exported object name
 - Adds `cors` options to `Route` constructor to allow CORS requests
 - Removes default logging from `Server`
-- Updates dependencies
+- Upgrades dependencies
 
 ## 1.1.3
-- Updates dependencies
+- Upgrades dependencies
 
 ## 1.1.2
-- Updates dependencies
+- Upgrades dependencies
 
 ## 1.1.1
-- Updates dependencies
+- Upgrades dependencies
 - Adds `Route.getDescription()`
 - Adds option `description` to `Route` constructor
 
