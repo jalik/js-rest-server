@@ -24,13 +24,14 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "build": "npx gulp build",
-    "lint": "npx eslint .",
-    "lint-fix": "npx eslint --fix .",
-    "prepare": "npx gulp prepare",
+    "build": "babel src -d dist",
+    "clean": "rimraf dist",
+    "dev": "babel --watch src -d dist",
+    "lint": "eslint .",
+    "lint-fix": "eslint --fix .",
+    "prepare": "npm run clean && npm run build && npm run lint",
     "prepublishOnly": "npm test",
-    "test": "npx jest",
-    "watch": "npx gulp watch"
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "@jalik/extend": "^2.1.11",
@@ -39,20 +40,17 @@
     "express": "^4.16.4"
   },
   "devDependencies": {
+    "@babel/cli": "^7.12.10",
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "acorn": "^8.0.4",
     "ajv": "^7.0.3",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
-    "del": "^5.1.0",
     "eslint": "^7.18.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jest": "^24.1.3",
-    "gulp": "^4.0.0",
-    "gulp-babel": "^8.0.0",
-    "gulp-eslint": "^6.0.0",
     "jest": "^26.6.3",
     "node-fetch": "^2.6.1",
     "typescript": "^4.1.3"
