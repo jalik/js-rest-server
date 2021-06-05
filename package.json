@@ -35,6 +35,10 @@
     "prepublishOnly": "npm test",
     "test": "jest --passWithNoTests"
   },
+  "files": [
+    "/dist",
+    "/src"
+  ],
   "dependencies": {
     "@jalik/extend": "^2.1.11",
     "@jalik/observer": "^1.1.10",
